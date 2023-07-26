@@ -1,3 +1,12 @@
+// Local storage container variable:
+
+var pastCitiesSearched = localStorage.getItem('Cities')
+if(pastCitiesSearched) {
+    pastCitiesSearched = JSON.parse(pastCitiesSearched)
+} else {
+    pastCitiesSearched = []
+}
+
 // Input and Search BTN Variables:
 
 var searchBar = document.querySelector('.citySearch')
@@ -40,13 +49,16 @@ var Humidity5 = document.querySelector('.Humidity5')
 // API Information
 var getWeather = function () {
     var cityName = searchBar.value
-    var Weather_API_Key = "7cf47c1dd3cac3c59e200954bea4d663";
+    var Weather_API_Key = "7cf47c1dd3cac3c59e200954bea4d663"
     var url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${Weather_API_Key}`
 
     if (!cityName) {
         alert('Error! Make sure to insert a City in the Search Bar.')
         return
     }
+
+    pastCitiesSearched.push(cityName)
+    localStorage.setItem("Cities",JSON.stringify(pastCitiesSearched))
 
     fetch(url).then(function (response) {
         return response.json()

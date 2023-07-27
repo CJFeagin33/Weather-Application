@@ -47,8 +47,9 @@ var Wind5 = document.querySelector('.Wind5')
 var Humidity5 = document.querySelector('.Humidity5')
 
 // API Information
-var getWeather = function () {
-    var cityName = searchBar.value
+function getWeather (cityName, isNotPullingFromLocalStorage) {
+    console.log(cityName)
+    
     var Weather_API_Key = "7cf47c1dd3cac3c59e200954bea4d663"
     var url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${Weather_API_Key}`
 
@@ -57,13 +58,20 @@ var getWeather = function () {
         return
     }
 
-    pastCitiesSearched.push(cityName)
-    localStorage.setItem("Cities",JSON.stringify(pastCitiesSearched))
-
     fetch(url).then(function (response) {
         return response.json()
     }).then(function (data) {
         console.log(data)
+
+        // I only want to add the City Name to Local Storage if the fetch was successful
+        if (isNotPullingFromLocalStorage) {
+            if (data.cod === 404) {
+                alert('Error! Make sure the City Name inserted is correctly spelled.')
+            } else {
+                pastCitiesSearched.push(cityName)
+                localStorage.setItem("Cities",JSON.stringify(pastCitiesSearched))
+            }
+        }
 
         // Current Day Weather Forcast:
 
@@ -103,6 +111,28 @@ var getWeather = function () {
     })
 }
 
+// Function for displaying past searched cities in local storage:
+
+var displayPreviousSearches = function () {
+    for (var i = 0; i < pastCitiesSearched.length; i++){
+        var previousLocationBtn =  document.createElement('button')
+        var cityName1 = pastCitiesSearched[i]
+        previousLocationBtn.innerHTML = cityName1
+        previousLocationBtn.addEventListener('click', function () {
+            getWeather(cityName1, false)
+        })
+        var recentSearches = document.querySelector('.recentSearches')
+        recentSearches.appendChild(previousLocationBtn)
+    }
+
+}
+
+displayPreviousSearches()
+console.log(pastCitiesSearched)
+
 // event listeners
 
-searchBtn.addEventListener('click', getWeather)
+searchBtn.addEventListener('click', function (event) {
+    var cityName = searchBar.value
+    getWeather(cityName, true)
+})

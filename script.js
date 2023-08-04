@@ -65,7 +65,7 @@ function getWeather (cityName, isNotPullingFromLocalStorage) {
 
         // I only want to add the City Name to Local Storage if the fetch was successful
         if (isNotPullingFromLocalStorage) {
-            if (data.cod === 404) {
+            if (data.cod == 404) {
                 alert('Error! Make sure the City Name inserted is correctly spelled.')
             } else {
                 pastCitiesSearched.push(cityName)
@@ -116,11 +116,12 @@ function getWeather (cityName, isNotPullingFromLocalStorage) {
 var displayPreviousSearches = function () {
     for (var i = 0; i < pastCitiesSearched.length; i++){
         var previousLocationBtn =  document.createElement('button')
+        previousLocationBtn.setAttribute('class', 'btn btn-secondary')
         var cityName1 = pastCitiesSearched[i]
         previousLocationBtn.innerHTML = cityName1
-        previousLocationBtn.addEventListener('click', function () {
-            getWeather(cityName1, false)
-        })
+        previousLocationBtn.onclick = function () {
+            getWeather(this.textContent, false)
+        }
         var recentSearches = document.querySelector('.recentSearches')
         recentSearches.appendChild(previousLocationBtn)
     }
@@ -128,11 +129,10 @@ var displayPreviousSearches = function () {
 }
 
 displayPreviousSearches()
-console.log(pastCitiesSearched)
 
 // event listeners
 
-searchBtn.addEventListener('click', function (event) {
+searchBtn.addEventListener('click', function () {
     var cityName = searchBar.value
     getWeather(cityName, true)
 })
